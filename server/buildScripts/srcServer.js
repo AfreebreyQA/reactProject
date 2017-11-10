@@ -9,8 +9,10 @@ const bodyParser = require("body-parser");
 
 // Express
 const app = express();
-const port = process.env.port || 3000;
+const port = 3001;
 const router = express.Router();
+
+let nextID = 3;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -39,8 +41,14 @@ router.get("/api/album/:id", (req, res) =>{
 // Post Request
 router.post("/api/album/", (req, res) => {
     const postAlbum = req.body;
-    const isValid = isValidAlbum(postAlbum) && !albums.find((a) => a.id == postAlbum.id);
+    // check the if the data sent is valid and if it does not already exist in the database
+    const isValid = isValidAlbum(postAlbum) && !(albums.find((a) => (a.artist == postAlbum.artist && a.title == postAlbum.title)));
     if (isValid) {
+        // server assignes the data with its "unique" ID and "creates" a new id to be used next time
+        postAlbum.id = nextID;
+        nextID++;
+
+        // adds sent data to "database"
         albums.push(postAlbum);
         res.send(postAlbum);
     }
@@ -59,7 +67,7 @@ router.put("/api/album/:id", (req, res) => {
         const putAlbum = req.body;
         const isValid = isValidAlbum(putAlbum);
         if (isValid) {
-            currentAlbum.id = putAlbum.id;
+            // Populate stored data with new data
             currentAlbum.title = putAlbum.title;
             currentAlbum.artist = putAlbum.artist;
             currentAlbum.releaseDate = putAlbum.releaseDate;
@@ -79,7 +87,8 @@ router.delete("/api/album/:id", (req, res) => {
     const currentAlbum = albums.findIndex((album) => album.id == albumID);
     if (currentAlbum !== -1) {
         albums.splice(currentAlbum, 1);
-        res.sendStatus(204);
+        res.json(null);
+        //res.sendStatus(204);
     } else {
         res.sendStatus(404);
     }
@@ -91,7 +100,7 @@ const albums = [
         id: 1,
         title: "Thank You, Happy Birthday",
         artist: "Cage the Elephant",
-        releaseDate: "2011-01-11T:00:00:00.000Z",
+        releaseDate: "2011-01-11",
         songs: [
             "Always Something",
             "Aberdeen",
@@ -114,7 +123,7 @@ const albums = [
         title: "The Big Come Up",
         artist: "The Black Keys",
         type: "CD",
-        releaseDate: "2002-05-14T:00:00:00.000Z",
+        releaseDate: "2002-05-14",
         songs: [
             "Busted",
             "Do the Rump",
@@ -134,7 +143,7 @@ const albums = [
 ];
 
 function isValidAlbum(_album){
-    return "id" in _album && "title" in _album && "artist" in _album && "songs" in _album;
+    return ("id" in _album && "title" in _album && "artist" in _album && "songs" in _album && "releaseDate" in _album);
 }
 
 // Run Server
