@@ -37,7 +37,6 @@ class App extends Component {
           List of all albums within personal database
         </p>
         <TableComponent albums={this.state.albums} loadAlbumsFromApp={this.loadAlbums} />
-
       </div>
     );
   }
@@ -64,7 +63,7 @@ class TableComponent extends Component {
                 title={album.title}
                 artist={album.artist}
                 releaseDate={album.releaseDate}
-                songs={Array.from(album.songs).length}
+                songs={album.songs}
                 loadAlbumsFromApps={this.props.loadAlbumsFromApp} />
             })}
         </tbody>
@@ -74,7 +73,7 @@ class TableComponent extends Component {
 }
 
 class AlbumRow extends Component {
-  
+
   removeAlbum = () => {
     deleteAlbum(this.props.id).then(() => this.props.loadAlbumsFromApps());
   }
@@ -98,7 +97,7 @@ class CreateAlbumFormComponent extends Component {
     this.state = {
       newAlbumTitle: "",
       newAlbumArtist: "",
-      newAlbumSongs: [],
+      newAlbumSongs: 0,
       newAlbumReleaseDate: ""
     }
 
@@ -106,46 +105,39 @@ class CreateAlbumFormComponent extends Component {
 
   }
 
+  addNewAlbum = () => {
+    let obj = {
+      title: this.state.newAlbumTitle,
+      artist: this.state.newAlbumArtist,
+      song: this.state.newAlbumSongs,
+      releaseDate: this.state.newAlbumReleaseDate
+    }
+  }
+
   render() {
     return (
       <div align="left">
-        <p>
-          Album Title:
-        </p>
-        <p>
-          <input type="text" align="right" value={this.state.newAlbumTitle} onChange={this.handleChange("newAlbumTitle")}></input>
-        </p>
-        <p>
-          Album Artist:
-        </p>
-        <p>
-          <input type="text" align="right" value={this.state.newAlbumArtist} onChange={this.handleChange("newAlbumArtist")}></input>
-        </p>
-        <p>
-          Album Songs:
-        </p>
-        {/* Textboxes for songs already in */}
-        <AddSongTextComponent />
-        <p>
-          Album Release Date:
-        </p>
-        <p>
-          <input type="date" align="right" value={this.state.newAlbumReleaseData} onChange={this.handleChange("newAlbumReleaseDate")}></input>
-        </p>
-        <button>Add New Album</button>
+        Album Title:
+        <br />
+        <input type="text" align="right" value={this.state.newAlbumTitle} onChange={this.handleChange("newAlbumTitle")}></input>
+        <br />
+        Album Artist:
+        <br />
+        <input type="text" align="right" value={this.state.newAlbumArtist} onChange={this.handleChange("newAlbumArtist")}></input>
+        <br />
+        Album Songs:
+        <br />
+        <input type="number" align="right" value={this.state.newAlbumSongs} onChange={this.handleChange("newAlbumSongs")}></input>
+        <br />
+        Album Release Date:
+        <br />
+        <input type="date" align="right" value={this.state.newAlbumReleaseDate} onChange={this.handleChange("newAlbumReleaseDate")}></input>
+        <br />
+        <button onClick={this.addNewAlbum}>Add New Album</button>
       </div>
     )
   }
 }
 
-class AddSongTextComponent extends Component {
-  render() {
-    return (
-      <div>
-        <input type="text" ></input><br /><button>+</button><button>-</button>
-      </div>
-    )
-  }
-}
 
 export default App;

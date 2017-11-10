@@ -40,9 +40,9 @@ router.get("/api/album/:id", (req, res) =>{
 
 // Post Request
 router.post("/api/album/", (req, res) => {
-    const postAlbum = req.body;
+    let postAlbum = req.body;
     // check the if the data sent is valid and if it does not already exist in the database
-    const isValid = isValidAlbum(postAlbum) && !(albums.find((a) => (a.artist == postAlbum.artist && a.title == postAlbum.title)));
+    const isValid = isValidAlbum(postAlbum) && !(albums.find((a) => (a.title == postAlbum.title)) && albums.find((a) => (a.artist == postAlbum.artist)));
     if (isValid) {
         // server assignes the data with its "unique" ID and "creates" a new id to be used next time
         postAlbum.id = nextID;
@@ -88,7 +88,6 @@ router.delete("/api/album/:id", (req, res) => {
     if (currentAlbum !== -1) {
         albums.splice(currentAlbum, 1);
         res.json(null);
-        //res.sendStatus(204);
     } else {
         res.sendStatus(404);
     }
@@ -101,21 +100,7 @@ const albums = [
         title: "Thank You, Happy Birthday",
         artist: "Cage the Elephant",
         releaseDate: "2011-01-11",
-        songs: [
-            "Always Something",
-            "Aberdeen",
-            "Indy Kidz",
-            "Shake Me Down",
-            "2024",
-            "Sell Yourself",
-            "Rubber Ball",
-            "Right Before My Eyes",
-            "Around My Head",
-            "Sabertooth Tiger",
-            "Japanese Buffalo",
-            "Flow",
-            "Right Before My Eyes (Alternate Version) (Hidden Track)"
-        ]
+        songs: 13
     },
 
     {
@@ -124,26 +109,18 @@ const albums = [
         artist: "The Black Keys",
         type: "CD",
         releaseDate: "2002-05-14",
-        songs: [
-            "Busted",
-            "Do the Rump",
-            "I'll Be Your Man",
-            "Countdown",
-            "The Breaks",
-            "Run Me Down",
-            "Leavin' Trunk",
-            "Heavy Soul",
-            "She Said, She Said",
-            "Them Eyes",
-            "Yearnin'",
-            "Brooklyn Bound",
-            "240 Years Before Your Time"
-        ]
+        songs: 13
     }
 ];
 
 function isValidAlbum(_album){
-    return ("id" in _album && "title" in _album && "artist" in _album && "songs" in _album && "releaseDate" in _album);
+    if(_album.title && _album.artist && _album.releaseDate && _album.songs)
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 // Run Server
